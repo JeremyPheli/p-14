@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
-import "../styles/index.css";
-import { states } from "../data/DataForm";
-import { Box, Button, MenuItem, Select, Stack, TextField } from "@mui/material";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { EmployeeContext } from "../context/context";
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Box, TextField, Button, Stack, Select, MenuItem } from '@mui/material';
+import DatePicker from 'react-datepicker';
+import { states } from '../data/DataForm';
+import 'react-datepicker/dist/react-datepicker.css';
+import { addEmployee } from '../employeeSlice';
 
 const Form = () => {
   const [firstName, setFirstName] = useState("");
@@ -14,10 +14,9 @@ const Form = () => {
   const [Zip, setZip] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [selectedState, setSelectedState] = useState("");
 
-  const [selectedState, setSelectedState] = React.useState("");
-
-  const { addEmployee } = useContext(EmployeeContext);
+  const dispatch = useDispatch();
 
   const handleChange = (event) => {
     setSelectedState(event.target.value);
@@ -35,7 +34,7 @@ const Form = () => {
       selectedState,
       Zip,
     };
-    addEmployee(formData);
+    dispatch(addEmployee(formData));
   };
 
   return (

@@ -1,144 +1,125 @@
-import React, { useContext, useMemo } from "react";
-import { EmployeeContext } from "../context/context";
-import { Link } from "react-router-dom";
+import React, { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   useReactTable,
-  getCoreRowModel,
-  flexRender,
   createColumnHelper,
-} from "@tanstack/react-table";
-import "../styles/index.css";
-import { Box, Stack } from "@mui/material";
+  getCoreRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  flexRender,
+} from '@tanstack/react-table';
+import { Stack, Box, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const CurrentEmployees = () => {
-  const { employees } = useContext(EmployeeContext);
-
+  const employees = useSelector((state) => state.employees);
   const data = useMemo(() => employees, [employees]);
+  console.log(data);
 
   const columnHelper = createColumnHelper();
 
-  const columns = [
+  const columns = useMemo(() => [
     columnHelper.accessor("firstName", {
-      cell: (info) => info.getValue(),
+      header: "First Name",
       footer: (info) => info.column.id,
+      sortingFn: 'basic',
     }),
-    columnHelper.accessor((row) => row.lastName, {
-      id: "lastName",
-      cell: (info) => <i>{info.getValue()}</i>,
-      header: () => <span>Last Name</span>,
+    columnHelper.accessor("lastName", {
+      header: "Last Name",
       footer: (info) => info.column.id,
+      sortingFn: 'basic',
     }),
     columnHelper.accessor("dateOfBirth", {
-      header: () => "Date of Birth",
+      header: "Date of Birth",
       cell: ({ getValue }) =>
         getValue() ? new Date(getValue()).toLocaleDateString() : "",
       footer: (info) => info.column.id,
+      sortingFn: 'datetime',
     }),
     columnHelper.accessor("startDate", {
-      header: () => "Start Date",
+      header: "Start Date",
       cell: ({ getValue }) =>
         getValue() ? new Date(getValue()).toLocaleDateString() : "",
       footer: (info) => info.column.id,
+      sortingFn: 'datetime',
     }),
     columnHelper.accessor("Street", {
       header: "Street",
       footer: (info) => info.column.id,
+      sortingFn: 'basic',
     }),
     columnHelper.accessor("City", {
       header: "City",
       footer: (info) => info.column.id,
+      sortingFn: 'basic',
     }),
     columnHelper.accessor("selectedState", {
-      header: "Selected State",
+      header: "State",
       footer: (info) => info.column.id,
+      sortingFn: 'basic',
     }),
     columnHelper.accessor("zip", {
-      header: "zip",
+      header: "Zip",
       footer: (info) => info.column.id,
+      sortingFn: 'basic',
     }),
-  ];
+  ], [columnHelper]);
 
-  // const columns = useMemo(
-  //   () => [
-  //     {
-  //       id: "firstName",
-  //       accessorKey: "firstName",
-  //       header: "First Name",
-  //     },
-  //     {
-  //       id: "lastName",
-  //       accessorKey: "lastName",
-  //       header: "Last Name",
-  //     },
-  //     {
-  //       id: "dateOfBirth",
-  //       accessorKey: "dateOfBirth",
-  //       header: "Date of Birth",
-  //       cell: ({ getValue }) =>
-  //         getValue() ? new Date(getValue()).toLocaleDateString() : "",
-  //     },
-  //     {
-  //       id: "startDate",
-  //       accessorKey: "startDate",
-  //       header: "Start Date",
-  //       cell: ({ getValue }) =>
-  //         getValue() ? new Date(getValue()).toLocaleDateString() : "",
-  //     },
-  //     {
-  //       id: "Street",
-  //       accessorKey: "Street",
-  //       header: "Street",
-  //     },
-  //     {
-  //       id: "City",
-  //       accessorKey: "City",
-  //       header: "City",
-  //     },
-  //     {
-  //       id: "selectedState",
-  //       accessorKey: "selectedState",
-  //       header: "State",
-  //     },
-  //     {
-  //       id: "Zip",
-  //       accessorKey: "Zip",
-  //       header: "Zip",
-  //     },
-  //   ],
-  //   []
-  // );
+  const [sorting, setSorting] = useState([]);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+      pagination,
+    },
+    onSortingChange: setSorting,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
   });
 
   return (
     <Stack>
       <h1>Liste des employés</h1>
-      <table>
+      <table style={{ border: '1px solid black', width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+              {headerGroup.headers.map(header => (
+                <th
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  style={{
+                    borderBottom: '1px solid black',
+                    borderRight: '1px solid black',
+                    cursor: 'pointer',
+                    padding: '8px',
+                    textAlign: 'left'
+                  }}
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {header.column.getIsSorted() === 'desc' ? ' 🔽' : ' 🔼'}
                 </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map(row => (
             <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+              {row.getVisibleCells().map(cell => (
+                <td
+                  key={cell.id}
+                  style={{ border: '1px solid black', padding: '8px' }}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -146,13 +127,21 @@ const CurrentEmployees = () => {
           ))}
         </tbody>
       </table>
-
-      <Box
-        display={"flex"}
-        alignItems={"flex-end"}
-        justifyContent={"center"}
-        mt={45}
-      >
+      <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between' }}>
+        <Button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+          Précédent
+        </Button>
+        <span>
+          Page{' '}
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </strong>
+        </span>
+        <Button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          Suivant
+        </Button>
+      </div>
+      <Box display={"flex"} alignItems={"flex-end"} justifyContent={"center"} mt={45}>
         <Link to="/">Home</Link>
       </Box>
     </Stack>
