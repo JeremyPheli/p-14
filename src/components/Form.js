@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Box, TextField, Button, Stack, Select, MenuItem } from '@mui/material';
-import DatePicker from 'react-datepicker';
-import { states } from '../data/DataForm';
-import 'react-datepicker/dist/react-datepicker.css';
-import { addEmployee } from '../employeeSlice';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Box, TextField, Button, Stack, Select, MenuItem } from "@mui/material";
+import DatePicker from "react-datepicker";
+import { states } from "../data/DataForm";
+import "react-datepicker/dist/react-datepicker.css";
+import { addEmployee } from "../employeeSlice";
 
 const Form = () => {
   const [firstName, setFirstName] = useState("");
@@ -27,8 +27,8 @@ const Form = () => {
     const formData = {
       firstName,
       lastName,
-      dateOfBirth,
-      startDate,
+      dateOfBirth: dateOfBirth ? dateOfBirth.toISOString() : null,
+      startDate: startDate ? startDate.toISOString() : null,
       Street,
       City,
       selectedState,
