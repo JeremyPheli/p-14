@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import { states } from "../data/DataForm";
 import "react-datepicker/dist/react-datepicker.css";
 import { addEmployee } from "../employeeSlice";
+import CustomModal from "react-modal-lib-jeremypheli";
 
 const Form = () => {
   const [firstName, setFirstName] = useState("");
@@ -15,6 +16,7 @@ const Form = () => {
   const [startDate, setStartDate] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [selectedState, setSelectedState] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -35,6 +37,11 @@ const Form = () => {
       Zip,
     };
     dispatch(addEmployee(formData));
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -48,7 +55,15 @@ const Form = () => {
       width={"30%"}
       padding={2}
     >
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
         <Stack spacing={2}>
           <TextField
             label="First Name"
@@ -119,10 +134,21 @@ const Form = () => {
           />
         </Box>
 
-        <Button type="submit" variant="contained" color="primary">
+        <Button
+          style={{ marginTop: 10 }}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
           Submit
         </Button>
       </form>
+
+      <CustomModal
+        open={isModalOpen}
+        handleClose={handleCloseModal}
+        message="L'employé à bien été crée"
+      />
     </Box>
   );
 };
