@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import Form from "../components/Form";
 import { Stack, Typography } from "@mui/material";
 
+// TAILWIND + FAKEDATA + GESTION DU FORMULAIRE
+
 const Home = () => {
   return (
     <Stack alignItems={"center"}>

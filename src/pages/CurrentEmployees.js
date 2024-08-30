@@ -162,7 +162,14 @@ const CurrentEmployees = () => {
   });
 
   return (
-    <Stack>
+    <Stack
+      spacing={2}
+      style={{
+        maxHeight: "100vh",
+        overflowY: "auto",
+        padding: "16px",
+      }}
+    >
       <h1>Liste des employés</h1>
       {isLoaded ? (
         <>
