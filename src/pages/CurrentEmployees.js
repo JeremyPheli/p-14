@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import fakeData from "../data/FakeData";
 
 const CurrentEmployees = () => {
   const employeesObject = useSelector((state) => state.employees);
@@ -28,11 +29,13 @@ const CurrentEmployees = () => {
   const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
-    if (employeesObject && typeof employeesObject === "object") {
+    if (employeesObject && Object.keys(employeesObject).length > 0) {
       const employeesArray = Object.values(employeesObject);
       setEmployees(employeesArray);
-      setIsLoaded(true);
+    } else {
+      setEmployees(fakeData);
     }
+    setIsLoaded(true);
   }, [employeesObject]);
 
   const filteredData = useMemo(() => {
@@ -64,7 +67,10 @@ const CurrentEmployees = () => {
     return filtered;
   }, [employees, searchTerm]);
 
-  const data = useMemo(() => filteredData, [filteredData]);
+  const data = useMemo(
+    () => (filteredData.length > 0 ? filteredData : fakeData),
+    [filteredData]
+  );
 
   const columnHelper = createColumnHelper();
 
